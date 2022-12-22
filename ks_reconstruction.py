@@ -80,16 +80,10 @@ plt.rc('axes', labelsize=3*20)
 plt.rc('legend', fontsize=3*5) 
 
 range_o = 20  # range of field in arcmin
-g_sigma = 0.02 # shear error for one galaxy 
-n = 50        # number of galaxies per arcmin^2
-pix_size = 0.1  # reconstruction pixel size in arcmin
+g_sigma = 0.0 # shear error for one galaxy 
+n = 500        # number of galaxies per arcmin^2
+#pix_size = 0.1  # reconstruction pixel size in arcmin
 pix_size = 3/np.sqrt(n)  # reconstruction pixel size in arcmin
-
-
-hdul = fits.open('snap_058.sph1000x1000S30Zl0.506868Zs2.000000prj3.kappa.fits')
-kappa_o = hdul[0].data
-hdul.close()
-kappa_o = kappa_o - kappa_o.min()
 
 
 hdul = fits.open('snap_058.sph1000x1000S30Zl0.506868Zs2.000000prj3.g1.fits')
@@ -102,7 +96,6 @@ hdul.close()
 
 # down size to 1 arcmin pixels
 Ndwnsize = int( pix_size * g1.shape[0] / range_o)
-
 sigma = g_sigma/np.sqrt(n)
 
 
@@ -114,6 +107,7 @@ g2 = g2 + sigma * np.random.normal(size=g1.shape)
 
 plt.imshow(g1,origin='lower')
 plt.show()
+input("Press Enter to continue...")
 
 levels = [0.10,0.15,0.20]
 kappa = np.zeros_like(g1)
@@ -124,7 +118,9 @@ for i in range(4) :
     #ax[i].imshow(kappa)
     plt.imshow(kappa,origin='lower',cmap='jet',vmax=0.6)#,cmap='cubehelix')
     plt.contour(kappa, levels, colors='w')
+    plt.title('iteration ' + str(i))
     plt.show()
+    input("Press Enter to continue...")
     
     #plt.plot(kappa[500,:],label='reconstructed')
     #plt.plot(kappa_o[500,:],label='original')
@@ -133,13 +129,21 @@ for i in range(4) :
     #plt.show()
 
 
+hdul = fits.open('snap_058.sph1000x1000S30Zl0.506868Zs2.000000prj3.kappa.fits')
+kappa_o = hdul[0].data
+hdul.close()
+kappa_o = kappa_o - kappa_o.min()
+
 kappa_reduced = block_reduce(kappa_o, block_size=(int(Ndwnsize/2), int(Ndwnsize/2)), func=np.mean)
 plt.imshow(kappa_reduced,origin='lower',cmap='jet',vmax=0.5)#,cmap='cubehelix')
 plt.contour(kappa_reduced, levels, colors='w')#, extent=extent)
+plt.title(r'down sampled true $\kappa$')
 plt.show()
+input("Press Enter to continue...")
 
 plt.imshow(kappa_o,origin='lower',cmap='jet',vmax=0.5)#cmap='cubehelix')
-plt.contour(kappa_o, levels, colors='w')#, extent=extent)
+#plt.contour(kappa_o, levels, colors='w')#, extent=extent)
+plt.title(r'full resolution true $\kappa$')
 plt.show()
 
 

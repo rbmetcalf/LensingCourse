@@ -3,6 +3,10 @@
 """
 Created on Mon Nov 21 18:35:27 2022
 
+lens_models.py
+
+Classes for some standard analytic lens models for demonstration purposes.
+
 @author: bmetcalf
 """
 import numpy as np
